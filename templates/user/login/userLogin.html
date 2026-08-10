@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login - Intensive Medical Hub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/static/css/user-login.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="brand-logo">
+        <i class="fa fa-hospital-o"></i>
+      </div>
+      <h1>Intensive Medical Hub</h1>
+      <p class="subtitle">User Portal & Blood Donation Network</p>
+    </div>
+
+    <div id="errorAlert" class="error-alert" style="display: none;">
+      <i class="fa fa-exclamation-circle"></i> Invalid User ID or Password. Please try again.
+    </div>
+
+    <form action="/user/login" method="post" class="login-form">
+      <div class="form-group">
+        <label for="username"><i class="fa fa-user"></i> User ID</label>
+        <input type="number" id="username" name="username" placeholder="Enter your User ID (e.g. 1)" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="password"><i class="fa fa-lock"></i> Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      </div>
+
+      <button type="submit" class="btn-primary">
+        <i class="fa fa-sign-in"></i> Login to Portal
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Don't have an account? <a href="/user/signup/userSignup.html">Sign Up Here</a></p>
+      <div class="portal-switch">
+        <span>Hospital Admin?</span> <a href="/admin/login/adminLogin.html"><i class="fa fa-user-md"></i> Admin Login</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check for error in query string
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === '1') {
+      document.getElementById('errorAlert').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

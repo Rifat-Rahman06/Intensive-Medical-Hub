@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Registration - Intensive Medical Hub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/static/css/user-signup.css">
+</head>
+<body>
+  <div class="signup-container">
+    <div class="signup-header">
+      <div class="brand-logo" style="background:#f0f9ff; color:#0284c7; border-color:#bae6fd;">
+        <i class="fa fa-hospital-o"></i>
+      </div>
+      <h1>Hospital Registration</h1>
+      <p class="subtitle">Register Hospital on Intensive Medical Hub Platform</p>
+    </div>
+
+    <form id="adminSignupForm" class="signup-form">
+      <div class="avatar-upload">
+        <div class="avatar-preview" style="border-color:#0284c7;">
+          <img id="imgPreview" src="/static/images/hospital.svg" alt="Hospital Preview">
+        </div>
+        <label for="hospitalImage" class="btn-upload" style="background:#f0f9ff; color:#0284c7; border-color:#bae6fd;">
+          <i class="fa fa-camera"></i> Hospital Image
+        </label>
+        <input type="file" id="hospitalImage" name="image" accept="image/*" onchange="previewImage(event)">
+      </div>
+
+      <div class="form-group">
+        <label for="name">Hospital Name</label>
+        <input type="text" id="name" name="name" placeholder="e.g. City General Hospital" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="contactNo">Contact Hotline</label>
+          <input type="text" id="contactNo" name="contact_no" placeholder="+880-1700000000" required>
+        </div>
+        <div class="form-group">
+          <label for="type">Hospital Type</label>
+          <select id="type" name="type" required>
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="emergencyUnits">Emergency Unit Available?</label>
+          <select id="emergencyUnits" name="emergency_units" required>
+            <option value="1">Yes (24/7 Unit)</option>
+            <option value="0">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="password">Admin Password</label>
+          <input type="password" id="password" name="password" placeholder="Create password" required>
+        </div>
+      </div>
+
+      <button type="button" class="btn-primary" style="background:#0284c7;" onclick="adminSignup()">
+        <i class="fa fa-plus-circle"></i> Register Hospital
+      </button>
+    </form>
+
+    <div class="signup-footer">
+      <p>Already Registered? <a href="/admin/login/adminLogin.html" style="color:#0284c7;">Admin Login</a></p>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-icon" style="color:#0284c7;"><i class="fa fa-check-circle"></i></div>
+      <h2>Hospital Registered!</h2>
+      <p>Please save your Hospital ID for administrator logins:</p>
+      <div class="user-id-badge" style="background:#f0f9ff; border-color:#0284c7;">
+        <span>Hospital ID:</span> <strong id="assignedId" style="color:#0284c7;">#000</strong>
+      </div>
+      <button class="btn-primary" style="background:#0284c7;" onclick="goToLogin()">Proceed to Admin Login</button>
+    </div>
+  </div>
+
+  <script src="/static/js/admin-signup.js"></script>
+</body>
+</html>

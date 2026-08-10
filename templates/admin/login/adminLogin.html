@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - Intensive Medical Hub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/static/css/admin-login.css">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="brand-logo">
+        <i class="fa fa-hospital-o"></i>
+      </div>
+      <h1>Hospital Admin Portal</h1>
+      <p class="subtitle">Intensive Medical Hub Administration</p>
+    </div>
+
+    <div id="errorAlert" class="error-alert" style="display: none;">
+      <i class="fa fa-exclamation-circle"></i> Invalid Hospital ID or Password. Please try again.
+    </div>
+
+    <form action="/admin/login" method="post" class="login-form">
+      <div class="form-group">
+        <label for="username"><i class="fa fa-building-o"></i> Hospital ID</label>
+        <input type="number" id="username" name="username" placeholder="Enter Hospital ID (e.g. 1)" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="password"><i class="fa fa-lock"></i> Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter admin password" required>
+      </div>
+
+      <button type="submit" class="btn-primary">
+        <i class="fa fa-sign-in"></i> Admin Login
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Register New Hospital? <a href="/admin/signup/adminSignup.html">Hospital Signup</a></p>
+      <div class="portal-switch">
+        <span>Regular User?</span> <a href="/user/login/userLogin.html"><i class="fa fa-user"></i> User Portal</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === '1') {
+      document.getElementById('errorAlert').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

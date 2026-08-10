@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - Intensive Medical Hub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/static/css/user.css">
+</head>
+<body>
+  <!-- Navigation Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-logo"><i class="fa fa-hospital-o"></i></div>
+      <div class="brand-title">
+        <h1>IMH Portal</h1>
+        <span>Intensive Medical Hub</span>
+      </div>
+    </div>
+
+    <div class="header-search">
+      <i class="fa fa-search search-icon"></i>
+      <input type="text" id="searchInput" placeholder="Search hospitals by name..." oninput="search()">
+      <div id="searchResults" class="search-dropdown" style="display: none;"></div>
+    </div>
+
+    <nav class="header-nav">
+      <button id="navHospitals" class="nav-btn active" onclick="switchNav('hospitals')">
+        <i class="fa fa-map-marker"></i> Hospitals
+      </button>
+      <button id="navBlood" class="nav-btn" onclick="switchNav('blood')">
+        <i class="fa fa-tint"></i> Blood Requests
+      </button>
+      <button id="navAbout" class="nav-btn" onclick="switchNav('about')">
+        <i class="fa fa-info-circle"></i> About
+      </button>
+    </nav>
+
+    <div class="header-right">
+      <div class="user-profile-toggle" onclick="toggleProfile()">
+        <img id="userAvatarHeader" src="/static/images/profile.svg" alt="Avatar">
+        <span id="userNameHeader">User</span>
+        <i class="fa fa-chevron-down"></i>
+
+        <!-- User Profile Dropdown Modal -->
+        <div id="profileDropdown" class="profile-modal" style="display: none;" onclick="event.stopPropagation()">
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <h3>User Profile</h3>
+              <button class="close-btn" onclick="toggleProfile(); event.stopPropagation();">&times;</button>
+            </div>
+
+            <form id="profileForm">
+              <div class="profile-avatar-edit">
+                <img id="profilePreview" src="/static/images/profile.svg" alt="Preview">
+                <label for="profilePictureInput" class="avatar-edit-label"><i class="fa fa-camera"></i> Change</label>
+                <input type="file" id="profilePictureInput" name="profile_picture" accept="image/*" onchange="previewProfileImage(event)">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>First Name</label>
+                  <input type="text" id="profFirstName" name="first_name" required>
+                </div>
+                <div class="form-group">
+                  <label>Last Name</label>
+                  <input type="text" id="profLastName" name="last_name" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Date of Birth</label>
+                  <input type="date" id="profDob" name="dob" required>
+                </div>
+                <div class="form-group">
+                  <label>Blood Group</label>
+                  <select id="profBloodGroup" name="blood_group" required>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" id="profPhone" name="phone_number" required>
+              </div>
+
+              <div class="profile-card-actions">
+                <button type="button" class="btn-cancel" onclick="toggleProfile(); event.stopPropagation();">Cancel</button>
+                <button type="button" class="btn-save" onclick="updateProfile(); event.stopPropagation();">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fa fa-sign-out"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-layout">
+    <!-- View 1: Hospitals View -->
+    <section id="hospitalsView" class="view-section active">
+      <!-- Filter Sidebar -->
+      <aside class="filter-sidebar">
+        <div class="sidebar-header">
+          <h2><i class="fa fa-sliders"></i> Filter Hospitals</h2>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-header">
+            <h3><i class="fa fa-map-marker"></i> Distance & Range</h3>
+          </div>
+          <div class="filter-group">
+            <label><i class="fa fa-arrows-h"></i> Max Radius (km)</label>
+            <div class="range-wrap">
+              <input type="range" id="radiusDistance" min="1" max="400" value="400" oninput="updateRadiusLabel(this.value)" onchange="loadFilter()">
+              <span id="radiusVal">400 km</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-header">
+            <h3><i class="fa fa-hospital-o"></i> Facility Features</h3>
+          </div>
+          <div class="filter-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="checkWard" onchange="loadFilter()">
+              <span>Must have Ward Facilities</span>
+            </label>
+          </div>
+          <div class="filter-group" style="margin-top: 10px;">
+            <label class="checkbox-label">
+              <input type="checkbox" id="checkEmergency" onchange="loadFilter()">
+              <span>24/7 Emergency Unit Only</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-header">
+            <h3><i class="fa fa-shield"></i> Ownership Type</h3>
+          </div>
+          <div class="filter-group">
+            <div class="radio-group-vertical">
+              <label class="radio-label">
+                <input type="radio" name="ownership" value="all" checked onchange="loadFilter()">
+                <span>All Ownerships</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="ownership" value="public" onchange="loadFilter()">
+                <span>Public Hospitals</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="ownership" value="private" onchange="loadFilter()">
+                <span>Private Hospitals</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-reset" onclick="resetFilters()">
+          <i class="fa fa-refresh"></i> Reset Filters
+        </button>
+      </aside>
+
+      <!-- Map View Area -->
+      <div class="map-wrapper">
+        <div id="hospitalMap" class="map-container"></div>
+
+        <!-- Detail Side Drawer / Info Panel -->
+        <div id="infoTab" class="info-drawer">
+          <button class="drawer-close" onclick="closeInfo()">&times;</button>
+
+          <div class="hospital-identity-card">
+            <img id="infoHospitalImg" src="/static/images/hospital.svg" alt="Hospital">
+            <div class="identity-details">
+              <h2 id="infoHospitalName">Hospital Name</h2>
+              <div class="badges">
+                <span id="infoHospitalType" class="badge">Public</span>
+                <span id="infoHospitalEmergency" class="badge badge-emergency">Emergency</span>
+              </div>
+              <p class="hotline"><i class="fa fa-phone"></i> <span id="infoHospitalContact">Contact</span></p>
+              <div class="rating-box">
+                <i class="fa fa-star text-warning"></i>
+                <span id="infoHospitalRating">0.0</span> / 5.0
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabs inside drawer -->
+          <div class="drawer-tabs">
+            <button id="tabWardsBtn" class="tab-btn active" onclick="switchDrawerTab('wards')">Wards</button>
+            <button id="tabTestsBtn" class="tab-btn" onclick="switchDrawerTab('tests')">Tests</button>
+            <button id="tabDoctorsBtn" class="tab-btn" onclick="switchDrawerTab('doctors')">Doctors</button>
+            <button id="tabReviewsBtn" class="tab-btn" onclick="switchDrawerTab('reviews')">Reviews</button>
+          </div>
+
+          <div class="drawer-content">
+            <div id="drawerWards" class="tab-panel active"></div>
+            <div id="drawerTests" class="tab-panel"></div>
+            <div id="drawerDoctors" class="tab-panel"></div>
+            <div id="drawerReviews" class="tab-panel">
+              <div class="add-review-box">
+                <h4 id="reviewBoxHeading">Write a Review</h4>
+                <div class="star-rating-select">
+                  <span>Rating:</span>
+                  <div class="stars" id="starSelector">
+                    <i class="fa fa-star" onclick="setRating(1)"></i>
+                    <i class="fa fa-star" onclick="setRating(2)"></i>
+                    <i class="fa fa-star" onclick="setRating(3)"></i>
+                    <i class="fa fa-star" onclick="setRating(4)"></i>
+                    <i class="fa fa-star" onclick="setRating(5)"></i>
+                  </div>
+                </div>
+                <textarea id="reviewTextInput" placeholder="Write your experience with this hospital..." rows="3"></textarea>
+                <div style="display: flex; gap: 8px;">
+                  <button id="submitReviewBtn" class="btn-primary-sm" onclick="submitReview()"><i class="fa fa-paper-plane"></i> Submit Review</button>
+                  <button id="cancelEditReviewBtn" class="btn-primary-sm" style="background: #64748b; display: none;" onclick="resetReviewForm()"><i class="fa fa-times"></i> Cancel</button>
+                </div>
+              </div>
+
+              <div id="reviewList" class="review-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- View 2: Blood Requests View -->
+    <section id="bloodView" class="view-section" style="display: none;">
+      <div class="blood-layout">
+        <div class="blood-map-container">
+          <div class="blood-filter-bar">
+            <label class="checkbox-label highlight">
+              <input type="checkbox" id="matchBloodGroup" onchange="toggleMatchBlood(this)">
+              <span><i class="fa fa-heartbeat"></i> Match My Blood Group Only</span>
+            </label>
+          </div>
+          <div id="bloodMap" class="map-container"></div>
+        </div>
+
+        <div class="blood-feed-panel">
+          <div class="feed-header">
+            <h2><i class="fa fa-tint text-danger"></i> Active Blood Requests</h2>
+            <p>Hospitals urgently requesting blood donors</p>
+          </div>
+          <div id="bloodRequestFeed" class="blood-feed-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- View 3: About View -->
+    <section id="aboutView" class="view-section" style="display: none;">
+      <div class="about-container">
+        <div class="about-card">
+          <div class="about-icon"><i class="fa fa-hospital-o"></i></div>
+          <h2>Intensive Medical Hub (IMH)</h2>
+          <p class="about-lead">A modern healthcare discovery and blood donation network uniting hospitals, doctors, and blood donors.</p>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <i class="fa fa-map-marker"></i>
+              <h3>Interactive Hospital Discovery</h3>
+              <p>Locate nearby public and private hospitals, view ward availability, doctors, and diagnostic tests in real-time.</p>
+            </div>
+
+            <div class="feature-card">
+              <i class="fa fa-tint"></i>
+              <h3>Emergency Blood Network</h3>
+              <p>Connect blood donors with hospital emergency requests instantly based on compatible blood groups.</p>
+            </div>
+
+            <div class="feature-card">
+              <i class="fa fa-star"></i>
+              <h3>Patient Reviews & Ratings</h3>
+              <p>Transparent patient reviews helping citizens make informed choices about medical services.</p>
+            </div>
+
+            <div class="feature-card">
+              <i class="fa fa-user-md"></i>
+              <h3>Hospital Administration</h3>
+              <p>Empowers hospital managers to update real-time bed capacity, medical specialists, and blood requests.</p>
+            </div>
+          </div>
+
+          <div class="about-footer">
+            <p>&copy; Intensive Medical Hub - Built for healthcare accessibility.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/static/js/user.js"></script>
+</body>
+</html>
