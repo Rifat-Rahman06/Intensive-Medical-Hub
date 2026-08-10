@@ -39,7 +39,6 @@
 
 ## 📸 User Interface Gallery
 
-### 🖥️ Dashboard View
 
 ### 🖥️ User Dashboard
 
