@@ -19,7 +19,7 @@
 ### 📸 Award Presentation Ceremony
 
 <div align="center">
-  <img src="screenshots/prize_giving.jpg" alt="UIU Project Show Fall 2023 Award Ceremony" width="80%" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);" />
+  <img src="screenshots/prize_giving.jpg" alt="UIU Project Show Fall 2023 Award Ceremony" width="95%" style="border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);" />
 <p><em>Figure 1: Receiving the 3rd Runner-Up award from United International University (UIU) faculty members at the Fall 2023 Project Show.</em></p>
 </div>
 
@@ -45,7 +45,7 @@
 The main user dashboard provides a location-aware view of nearby hospitals, with interactive map markers, real-time user location, and filtering options for discovering relevant healthcare facilities.
 
 <p align="center">
-  <img src="screenshots/dashboard.jpg" alt="Intensive Medical Hub User Dashboard" width="1000">
+  <img src="screenshots/dashboard.jpg" alt="Intensive Medical Hub User Dashboard" width="90%">
 </p>
 
 <p align="center">
